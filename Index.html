@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="container">
+        <div class="section-container">
+            <button id="focus" class="btn btn-timer btn-focus">Focus</button>
+            <button id="shortbreak" class="btn btn-timer">Short Break</button>
+            <button id="longbreak" class="btn btn-timer">Long Break</button>
+        </div>
+
+        <div class="time-btn-container">
+            <span id="time">25:00</span>
+            <div class="btn-container">
+                <button id="btn-start" class="btn">Start</button>
+                <button id="btn-pause" class="btn hide">Pause</button>
+                <button id="btn-resume" class="btn hide">Resume</button>
+                <button id="btn-start-over" class="btn hide">Start Over</button>
+                <button id="btn-reset" class="btn hide">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <h2>Session Statistics</h2>
+            <div id="focus-sessions">Focus Sessions: <span id="focus-count">0</span></div>
+            <div id="short-breaks">Short Breaks: <span id="short-break-count">0</span></div>
+            <div id="long-breaks">Long Breaks: <span id="long-break-count">0</span></div>
+        </div>
+
+        <div class="task-list-container">
+            <h2>Tasks</h2>
+            <ul id="task-list"></ul>
+            <input type="text" id="new-task-input" placeholder="Enter a new task" />
+            <button id="add-task-btn" class="btn">Add Task</button>
+        </div>
+    </div>
+    <div id="activity-summary-modal" class="modal hide">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="close-modal" class="close">&times;</span>
+                <h2>Activity Summary</h2>
+            </div>
+            <div class="modal-body">
+                <div class="summary-tabs">
+                    <button class="tab-btn active">Summary</button>
+                    <button class="tab-btn">Detail</button>
+                    <button class="tab-btn">Ranking</button>
+                </div>
+                <div class="activity-summary">
+                    <!-- Placeholder for summary -->
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <span class="stat-icon">🕒</span>
+                            <span class="stat-value" id="hours-focused">--</span>
+                            <span class="stat-label">hours focused</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">📅</span>
+                            <span class="stat-value" id="days-accessed">--</span>
+                            <span class="stat-label">days accessed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🔥</span>
+                            <span class="stat-value" id="day-streak">--</span>
+                            <span class="stat-label">day streak</span>
+                        </div>
+                    </div>
+                    <div class="focus-hours">
+                        <div class="time-filter">
+                            <button class="filter-btn">Week</button>
+                            <button class="filter-btn active">Month</button>
+                            <button class="filter-btn">Year</button>
+                        </div>
+                        <!-- Placeholder for the graph -->
+                        <div class="graph-placeholder">Graph will be here</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>
