@@ -12,6 +12,8 @@ let addTaskBtn = document.getElementById("add-task-btn");
 let taskList = document.getElementById("task-list");
 let modal = document.getElementById("activity-summary-modal");
 let closeModal = document.getElementById("close-modal");
+let themeToggleButton = document.getElementById("theme-toggle-btn");
+let languageSwitcher = document.getElementById("language-switcher");
 
 let timer, endTime;
 let isTimerPaused = false;
@@ -32,13 +34,114 @@ let stats = {
     longBreakCount: parseInt(localStorage.getItem('longBreakCount') || 0)
 };
 
+function displayQuote(quote) {
+    const quoteElement = document.getElementById('quoteDisplay');
+    quoteElement.textContent = quote;
+}
+
+function displayQuote(quote, author) {
+    const quoteTextElement = document.getElementById('quoteText');
+    const quoteAuthorElement = document.getElementById('quoteAuthor');
+    quoteTextElement.textContent = `"${quote}"`;
+    quoteAuthorElement.textContent = `- ${author}`;
+}
+
+
+const translations = {
+    'en': {
+        'focus': 'Focus',
+        'shortBreak': 'Short Break',
+        'longBreak': 'Long Break',
+        'start': 'Start',
+        'pause': 'Pause',
+        'resume': 'Resume',
+        'startOver': 'Start Over',
+        'reset': 'Reset',
+        'addTask': 'Add Task',
+        
+    },
+    'es': {
+        'focus': 'Enfocar',
+        'shortBreak': 'Descanso Corto',
+        'longBreak': 'Descanso Largo',
+        'start': 'Empezar',
+        'pause': 'Pausa',
+        'resume': 'Continuar',
+        'startOver': 'Empezar de Nuevo',
+        'reset': 'Reiniciar',
+        'addTask': 'Añadir Tarea',
+        
+    },
+    'bn': {
+        'focus': 'মনোনিবেশ',
+        'shortBreak': 'স্বল্প বিরতি',
+        'longBreak': 'দীর্ঘ বিরতি',
+        'start': 'শুরু',
+        'pause': 'বিরতি',
+        'resume': 'আবার শুরু',
+        'startOver': 'পুনরায় শুরু',
+        'reset': 'রিসেট',
+        'addTask': 'কাজ যোগ করুন',
+        
+    }
+};
+
+let productivityData = {
+    labels: [],
+    datasets: [{
+        label: 'Focus Sessions',
+        data: [],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+    }]
+};
+
+let ctx = document.getElementById('productivityChart').getContext('2d');
+let productivityChart = new Chart(ctx, {
+    type: 'line',
+    data: productivityData,
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+function updateChartData(date, sessionCount) {
+    let labelIndex = productivityChart.data.labels.indexOf(date);
+
+    if (labelIndex === -1) {
+        productivityChart.data.labels.push(date);
+        productivityChart.data.datasets[0].data.push(sessionCount);
+    } else {
+        productivityChart.data.datasets[0].data[labelIndex] = sessionCount;
+    }
+    
+    productivityChart.update();
+}
+
+
+function recordFocusSession() {
+    let today = new Date().toISOString().split('T')[0];
+    let storedData = JSON.parse(localStorage.getItem('productivityData')) || {};
+
+    storedData[today] = (storedData[today] || 0) + 1;
+    localStorage.setItem('productivityData', JSON.stringify(storedData));
+    updateChartData(today, storedData[today]);
+}
+
+let currentLanguage = 'en';
+
 const updateStatsDisplay = () => {
     document.getElementById('focus-count').textContent = stats.focusCount;
     document.getElementById('short-break-count').textContent = stats.shortBreakCount;
     document.getElementById('long-break-count').textContent = stats.longBreakCount;
 };
 
-updateStatsDisplay();
 
 const toggleButtonVisibility = () => {
     startBtn.classList.toggle("hide", isTimerRunning || isTimerPaused);
@@ -144,16 +247,27 @@ closeModal.addEventListener("click", () => {
     modal.classList.add("hide");
 });
 
-// Function to open modal
-function openActivitySummary() {
-    modal.classList.remove("hide");
-    // Populate the summary data and render the graph
-    // This would be fetched from a server or database in a full application
-    document.getElementById("hours-focused").textContent = "10";
-    document.getElementById("days-accessed").textContent = "5";
-    document.getElementById("day-streak").textContent = "3";
-    // renderGraph(); // Placeholder for graph rendering logic
-}
+themeToggleButton.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+});
+
+languageSwitcher.addEventListener('change', (event) => {
+    currentLanguage = event.target.value;
+    updateTranslations();
+});
+
+const updateTranslations = () => {
+    focusButton.textContent = translations[currentLanguage]['focus'];
+    shortBreakButton.textContent = translations[currentLanguage]['shortBreak'];
+    longBreakButton.textContent = translations[currentLanguage]['longBreak'];
+    startBtn.textContent = translations[currentLanguage]['start'];
+    pauseBtn.textContent = translations[currentLanguage]['pause'];
+    resumeBtn.textContent = translations[currentLanguage]['resume'];
+    startOverBtn.textContent = translations[currentLanguage]['startOver'];
+    resetBtn.textContent = translations[currentLanguage]['reset'];
+    addTaskBtn.textContent = translations[currentLanguage]['addTask'];
+    
+};
 
 addTaskBtn.addEventListener("click", () => {
     let taskText = taskInput.value.trim();
@@ -173,3 +287,5 @@ const addTask = (taskText) => {
 };
 
 setTimer(sessionTypes[currentSessionType].minutes);
+updateStatsDisplay();
+updateTranslations();
